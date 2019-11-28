@@ -18,7 +18,7 @@
     <head>
         <base href="<%=basePath%>">
         <meta charset="UTF-8">
-        <title>感应鼠标进出方向悬浮效果</title>
+        <title>1111感应鼠标进出方向悬浮效果</title>
         <link rel="stylesheet" href="<%=basePath%>resource/css/example.css">
         <script src="<%=basePath%>resource/js/sHover.min.js"></script>
     </head>
