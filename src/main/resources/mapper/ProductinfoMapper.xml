@@ -18,6 +18,10 @@
     P_ID, P_CODE, P_NAME, P_TYPE, BRAND, PIC, P_NUM, PRICE, SALE, INTRO, STATUS
   </sql>
 
+  <select id="selectAllProductsByP_type" resultType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />from productinfo where P_TYPE=#{p_type,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectAllP_type" resultType="java.lang.String">
     select distinct p_type from productinfo
   </select>

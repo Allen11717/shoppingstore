@@ -8,6 +8,8 @@ public interface ProductinfoMapper {
 
     List<String> selectAllP_type();
 
+    List<Productinfo> selectAllProductsByP_type(String p_type);
+
     int deleteByPrimaryKey(Integer pId);
 
     int insert(Productinfo record);
