@@ -88,25 +88,46 @@
 
         window.flag;
 
-        var username="${sessionScope.info.username}";
-        var password="${sessionScope.info.password}";
-        /*记住密码后从session里获取用户名密码，填充到页面*/
-        $("#username1").val(username);
-        $("#password1").val(password);
 
-        if($("#username1").val()!=''&&$("#password1").val()!=''){
+        //用cookie登录
+        //var username=getCookie("username");
+        var username ="${cookie.username.value}";
+        var password ="${cookie.password.value}";
+        var username2="${cookie.flag.value}";
+        //用session登录
+        //var username="${sessionScope.info.username}";
+       // var password="${sessionScope.info.password}";
+        /*记住密码后从session里获取用户名密码，填充到页面*/
+        /*$("#username1").val(username);
+        $("#password1").val(password);*/
+
+        if(username2=="no"){
+            //alert(username);
+            $("#username1").val(username);
+            $("#password1").val(password);
             $("input[type='checkbox']").attr("checked","checked");
         }else{
+            //alert( getCookie("username"));
             $("input[type='checkbox']").removeAttr("checked");
-        }
+         }
+
+
+       /* if ($("input[type='checkbox']").is(':checked')) {
+            //flag = "yes";
+            $("#username1").val(username);
+            $("#password1").val(password);
+        }*/
 
         $("#btnLogin").click(function(){
 
-            if ($("input[type='checkbox']").is(':checked')) {
-                flag = "yes";
+            if ($("input[type='checkbox']").is(':checked')){
+                flag="yes";
             }else{
                 flag="no";
             }
+
+            //记住密码后从Cookie里获取用户名密码，填充到页面
+
             if($("#username1").val()!=''&&$("#password1").val()!='') {
                 $.ajax({
                     url: "login",
@@ -118,11 +139,12 @@
                     }, success: function (data) {
                         if (data == "none") {
                             $("#msg").html("用户不存在");
-                        } else if (data == "yes") {
+                        } else if (data == "true") {
                             //跳转页面
-                            $("#msg").html("成功");
+                            //$("#msg").html("登录成功");
+                            window.location.href="<%=basePath%>/resource/shop/navigator.jsp?username="+$("#username1").val();
                         } else {
-                            $("#msg").html("错误!");
+                            $("#msg").html("用户名或密码错误错误!");
                         }
                     }
                 })
@@ -164,6 +186,22 @@
             }
         })
     })
+
+
+
+    function getCookie(name) {
+        var strcookie = document.cookie;//获取cookie字符串
+        var arrcookie = strcookie.split(";");//分割
+
+        //遍历匹配
+        for(var i=0;i<arrcookie.length;i++){
+            var arr = arrcookie[i].split("=");
+            if(arr[0]==name){
+                return arr[1];
+            }
+        }
+        return "";
+    }
 
 
 

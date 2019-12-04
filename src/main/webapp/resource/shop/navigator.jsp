@@ -32,6 +32,12 @@
            bottom:200px;
        }
 
+       #carImg{
+           position: fixed;
+           right:10px;
+           bottom:150px;
+       }
+
    </style>
 
 </head>
@@ -277,6 +283,7 @@
 </div>
 <iframe  id="myframe"></iframe>
 <img src="<%=basePath%>resource/images/top.png" id="topImg"/>
+<img src="<%=basePath%>resource/images/car.png" id="carImg"/>
 <script>
 $(function(){
 /*一进页面就发请求查询所有的类别*/
@@ -298,7 +305,7 @@ $(function(){
 
    $(".pieces").on("click",".future_ui__piece",function(){
        var type=$(this).children().children().children().text();
-       $("#myframe").attr("src","<%=basePath%>resource/shop/showProducts.jsp?p_type="+type);
+       $("#myframe").attr("src","<%=basePath%>resource/shop/showProducts.jsp?p_type="+type+"&username="+getQueryString("username"));
 
        $(".intro").hide();
        $("#myframe").show();
@@ -313,14 +320,42 @@ $(function(){
        $("#topImg").hide();
    });
 
-
-
-
-
 });
 
 
+$("#carImg").click(function () {
 
+    if(getCookie("username")=="null"||getCookie("username")==''||getCookie("username")==undefined){
+        //alert(getQueryString("username"))
+        window.location.href="<%=basePath%>/resource/login/login.jsp";
+    }else{
+        window.open("<%=basePath%>/resource/shop/carItems.jsp");
+    }
+
+})
+
+
+function getQueryString(name){
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if(r!=null)
+        return  decodeURI(r[2]);
+    return null;
+}
+
+function getCookie(name) {
+    var strcookie = document.cookie;//获取cookie字符串
+    var arrcookie = strcookie.split(";");//分割
+
+    //遍历匹配
+    for(var i=0;i<arrcookie.length;i++){
+        var arr = arrcookie[i].split("=");
+        if(arr[0]==name){
+            return arr[1];
+        }
+    }
+    return "";
+}
 
 
 </script>

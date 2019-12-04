@@ -35,30 +35,8 @@
     <!-- Product grid -->
     <section class="grid">
         <!-- Products -->
-        <div class="product">
-            <div class="product__info">
-                <img class="product__image" src="<%=basePath%>resource/images/1.png" alt="Product 1" />
-                <h3 class="product__title">商品名</h3>
-                <span class="product__region extra highlight">商品介绍</span>
-                <span class="product__varietal extra highlight">商品规格</span>
-                <span class="product__price highlight">价格</span>
-                <button class="action action--button action--buy"><i class="fa fa-shopping-cart"></i><span class="action__text cd-add-to-cart">Add to cart</span></button>
-            </div>
-            <label class="action action--compare-add"><input class="check-hidden" type="checkbox" /><i class="fa fa-plus"></i><i class="fa fa-check"></i><span class="action__text action__text--invisible">Add to compare</span></label>
-        </div>
 
 
-        <div class="product">
-            <div class="product__info">
-                <img class="product__image" src="<%=basePath%>resource/images/2.png" alt="Product 2" />
-                <h3 class="product__title">商品名</h3>
-                <span class="product__region extra highlight">商品介绍</span>
-                <span class="product__varietal extra highlight">商品规格</span>
-                <span class="product__price highlight">价格</span>
-                <button class="action action--button action--buy"><i class="fa fa-shopping-cart"></i><span class="action__text cd-add-to-cart">Add to cart</span></button>
-            </div>
-            <label class="action action--compare-add"><input class="check-hidden" type="checkbox" /><i class="fa fa-plus"></i><i class="fa fa-check"></i><span class="action__text action__text--invisible">Add to compare</span></label>
-        </div>
 
     </section>
 </div><!-- /view -->
@@ -82,34 +60,65 @@
     $(function(){
 
   $.ajax({
-   url:"selectAllProductsByP_type",
+      url:"selectAllProductsByP_type",
       type:"post",
       data:{
       "p_type":getQueryString("p_type")
       },
       success:function(data){
 
-       // for(var i=0;i<data.length;i++){
-       // var str="<div  class='sHoverItem'>" +
-       //     "    <img  src='"+data[i].pic+"'>" +
-       //     "    <span  class='sIntro'>" +
-       //     "<h2>"+data[i].pName+"</h2>" +
-       //     "<p>"+data[i].intro+"</p>" +
-       //     "<p>$"+data[i].price+"</p>"+
-       //     "<button >立即购买</button>" +
-       //     "<button pid='"+data[i].pId+"' class='addCart'>加入购物车</button>" +
-       //     "</span>" +
-       //     " </div>";
-       //     $(".container").append(str);
-       // }
+       for(var i=0;i<data.length;i++){
+       var str="<div class='product'>" +
+           "            <div class='product__info'>" +
+           "                <img class='product__image' src='<%=basePath%>resource/images/1.png' alt='Product 1' />" +
+           "                <h3 class='product__title'>"+data[i].pName+"</h3>" +
+           "                <span class='product__region extra highlight'>"+data[i].intro+"</span>" +
+           "                <span class='product__price highlight'>"+data[i].price+"</span>" +
+           "                <button class='action action--button action--buy' pid='"+data[i].pId+"'><i class='fa fa-shopping-cart'></i><span class='action__text cd-add-to-cart'>加入购物车</span></button>" +
+           "            </div>" +
+           "            <label class='action action--compare-add'><input class='check-hidden' type='checkbox' /><i class='fa fa-plus'></i><i class='fa fa-check'></i><span class='action__text action__text--invisible'>比较商品</span></label>'" +
+           "        </div>";
 
+           $(".grid").append(str);
+       }
+
+
+          loadjscssfile("<%=basePath%>resource/js/classie.js","js");
+          loadjscssfile("<%=basePath%>resource/js/main.js","js");
 
       }
   });
 
 
-  $(".container").on("click",".addCart",function(){
-    alert($(this).attr("pid"));
+  $(".grid").on("click",".action",function(){
+    //alert($(this).attr("pid"));
+
+    //$(this).children().attr().eq(1);
+
+      //alert(getCookie("username"));
+
+
+
+    if(getCookie("username")=="null"||getCookie("username")==''||getCookie("username")==undefined){
+        //alert(getQueryString("username"))
+        window.location.href="<%=basePath%>/resource/login/login.jsp";
+
+
+    }else{
+        //alert(getCookie("username"));
+        $.ajax({
+            url:"addCar",
+            type:"post",
+            data:{
+                "pid":$(this).attr("pid"),
+                "username":"${cookie.username.value}"
+            },
+            success:function (data) {
+
+            }
+        })
+
+    }
 
   });
 
@@ -140,6 +149,21 @@
         }
         if (typeof fileref != "undefined")
             document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
+
+
+    function getCookie(name) {
+        var strcookie = document.cookie;//获取cookie字符串
+        var arrcookie = strcookie.split(";");//分割
+
+        //遍历匹配
+        for(var i=0;i<arrcookie.length;i++){
+            var arr = arrcookie[i].split("=");
+            if(arr[0]==name){
+                return arr[1];
+            }
+        }
+        return "";
     }
 
 
