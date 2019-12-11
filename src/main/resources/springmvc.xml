@@ -9,20 +9,63 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
 
     <context:component-scan base-package="controller,serviceimpl"/>
     <mvc:default-servlet-handler />
 
     <!--开启注解驱动-->
     <mvc:annotation-driven />
-    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
+    <!--开启aspectj自动代理-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!-- 前缀 -->
         <property name="prefix" value="/WEB-INF/jsp/" />
         <!-- 后缀 -->
         <property name="suffix" value=".jsp" />
     </bean>
+
+    <!--xml里指明切面类-->
+    <bean id="myAs2" class="aspect.OrderAspect"></bean>
+
+   <!-- aop:config标签用来配置有关切面的配置  -->
+    <aop:config>
+        <!-- 设置切点表达式 以便下面引用 -->
+        <aop:pointcut expression="execution(* controller.ShopCarController.deleteProduction(..))" id="cut"/>
+        <!-- 配置切面所用的bean 和优先级 -->
+        <aop:aspect ref="myAs2" order="2" >
+            <!-- 配置切面方法 -->
+            <aop:before method="beforeCheck" pointcut-ref="cut"/>
+            <aop:after method="afterCheck"  pointcut-ref="cut"/>
+            <aop:after-returning method="afterReturn" pointcut-ref="cut" returning="res"/>
+            <aop:after-throwing method="afterThrow" pointcut-ref="cut" throwing="ex"/>
+            <aop:around method="around" pointcut-ref="cut"/>
+        </aop:aspect>
+
+    </aop:config>
+
+    <mvc:interceptors>
+    <mvc:interceptor>
+        <!--/*表示拦截所有请求,如果想拦截以某个名字(abc)结尾的请求path里写/*/abc,如果想拦截以某个名字(abc)开头的请求,path里写/abc/* -->
+        <mvc:mapping path="/selectAllP_type" />
+        <!-- 排除拦截的地址 -->
+        <!--  <mvc:exclude-mapping path="/*/login"/> 不拦截login结尾的请求 -->
+        <bean id="commonInterceptor" class="interceptor.MyInterceptor"></bean> <!--这个类就是我们自定义的Interceptor -->
+    </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8" />
+        <!-- 指定所上传文件的总大小,单位字节。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+        <property name="maxUploadSize" value="10240000" />
+        <property name="resolveLazily" value="true"/>
+
+    </bean>
+
 
 
 </beans>

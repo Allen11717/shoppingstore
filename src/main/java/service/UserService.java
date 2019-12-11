@@ -4,6 +4,10 @@ import entity.Userinfo;
 
 public interface UserService {
 
+    int selectUidByUsername(String username);
+
+    String selectEmailByUsername(String name);
+
     Userinfo selectByUsername(String username);
 
     int deleteByPrimaryKey(Integer uId);

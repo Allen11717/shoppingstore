@@ -5,14 +5,14 @@
     <id column="O_ID" property="oId" jdbcType="DECIMAL" />
     <result column="USERID" property="userid" jdbcType="DECIMAL" />
     <result column="STATUS" property="status" jdbcType="DECIMAL" />
-    <result column="ORDERTIME" property="ordertime" jdbcType="DATE" />
+    <result column="ORDERTIME" property="ordertime" jdbcType="VARCHAR" />
     <result column="PID" property="pid" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
     O_ID, USERID, STATUS, ORDERTIME, PID
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from ORDERINFO
     where O_ID = #{oId,jdbcType=DECIMAL}
@@ -22,10 +22,13 @@
     where O_ID = #{oId,jdbcType=DECIMAL}
   </delete>
   <insert id="insert" parameterType="entity.Orderinfo" >
-    insert into ORDERINFO (O_ID, USERID, STATUS, 
-      ORDERTIME, PID)
-    values (#{oId,jdbcType=DECIMAL}, #{userid,jdbcType=DECIMAL}, #{status,jdbcType=DECIMAL}, 
-      #{ordertime,jdbcType=DATE}, #{pid,jdbcType=DECIMAL})
+    <selectKey keyProperty="oId" order="BEFORE" resultType="int">
+      select seq_user_info_id.nextval from dual
+    </selectKey>
+    insert into ORDERINFO (O_ID, USERID, STATUS,
+    ORDERTIME, PID)
+    values (#{oId,jdbcType=DECIMAL}, #{userid,jdbcType=DECIMAL}, #{status,jdbcType=DECIMAL},
+    #{ordertime,jdbcType=VARCHAR}, #{pid,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="entity.Orderinfo" >
     insert into ORDERINFO
@@ -57,7 +60,7 @@
         #{status,jdbcType=DECIMAL},
       </if>
       <if test="ordertime != null" >
-        #{ordertime,jdbcType=DATE},
+        #{ordertime,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
         #{pid,jdbcType=DECIMAL},
@@ -74,7 +77,7 @@
         STATUS = #{status,jdbcType=DECIMAL},
       </if>
       <if test="ordertime != null" >
-        ORDERTIME = #{ordertime,jdbcType=DATE},
+        ORDERTIME = #{ordertime,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
         PID = #{pid,jdbcType=DECIMAL},
@@ -86,7 +89,7 @@
     update ORDERINFO
     set USERID = #{userid,jdbcType=DECIMAL},
       STATUS = #{status,jdbcType=DECIMAL},
-      ORDERTIME = #{ordertime,jdbcType=DATE},
+      ORDERTIME = #{ordertime,jdbcType=VARCHAR},
       PID = #{pid,jdbcType=DECIMAL}
     where O_ID = #{oId,jdbcType=DECIMAL}
   </update>

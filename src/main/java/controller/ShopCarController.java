@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import serviceimpl.ProductinfoServiceImpl;
+import serviceimpl.UserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.mail.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 public class ShopCarController {
@@ -22,6 +27,9 @@ public class ShopCarController {
 
     @Autowired
     ProductinfoServiceImpl psi;
+
+    @Autowired
+    UserServiceImpl usi;
 
     @RequestMapping("/addCar")
     public String addcar(@RequestParam String pid,@RequestParam String username){
@@ -96,6 +104,67 @@ public class ShopCarController {
         Map<String, String> map = jedis.hgetAll(username);
         map.put(pid,String.valueOf(Integer.parseInt(map.get(pid))+1));
         jedis.hmset(username,map);
+    }
+
+    @RequestMapping("/sendEmail")
+    public  String getEmailCount(@RequestParam String username,HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        String email=usi.selectEmailByUsername(username);
+        int randomNum=(int)((Math.random()*9+1)*100000);
+
+        sendEmail(email,randomNum,req,resp);
+        return String.valueOf(randomNum);
+    }
+
+
+    public  void sendEmail(String emailCount, int randomNum, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
+        String from="1171707621@qq.com";//你自己的邮箱
+        String host="smtp.qq.com";//本机地址
+        //Properties可以确定系统的属性,就是为了寻找我们的host
+        Properties properties=System.getProperties();
+        properties.setProperty("mail.smtp.host", host);
+        properties.setProperty("mail.smtp.port", "25");
+        properties.put("mail.smtp.auth","true");//开启代理
+
+        Authenticator aut=new Authenticator() {//创建Authenticator内部类来填入代理的用户名前缀和密码
+
+            protected PasswordAuthentication getPasswordAuthentication() {
+
+                return new PasswordAuthentication("1171707621","dktjvukotejohjjc");//填用户名和代理密码
+
+            }
+
+        };
+
+        //创建Session会话,Session是java.mail API最高入口
+        Session session= Session.getDefaultInstance(properties,aut);
+        //MimeMessage获取session对象,就可以创建要发送的邮箱内容和标题
+        MimeMessage message=new MimeMessage(session);
+        try {
+            message.setFrom(new InternetAddress(from));//设置你自己的邮箱
+            message.addRecipients(Message.RecipientType.TO, emailCount);//设置接受邮箱
+            message.setSubject("验证码");//设置邮箱标题
+            message.setText("您本次的验证码是:"+randomNum);//邮箱内容
+            Transport.send(message);//发送邮箱
+
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/deleteProductNum")
+    public synchronized String deleteProduction(@RequestParam String username,@RequestParam Integer pid,@RequestParam Integer pnum){
+        Productinfo pi=psi.selectByPrimaryKey(pid);
+        if(pi.getpNum()>=pnum){
+            pi.setpNum(pi.getpNum()-pnum);
+            psi.updateByPrimaryKey(pi);
+            return "yes";
+        }
+
+        return "no";
     }
 
 }

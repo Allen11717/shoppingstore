@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%=basePath%>resource/css/resetcar.css">
     <link rel="stylesheet" href="<%=basePath%>resource/css/carts.css">
+    <link rel="stylesheet" href="<%=basePath%>resource/css/search.css">
 
 
     <style>
@@ -428,9 +429,11 @@
                     url:"deleteProductNum",
                     type:"post",
                     data:{
-                        "username":getCookie("username"),
+                        "username":"${cookie.username.value}",
                         "pid":labels.eq(i).attr("pid"),
                         "pnum":labels.eq(i).attr("pnum")
+                    },success:function (data) {
+
                     }
 
                 });

@@ -1,7 +1,5 @@
 package entity;
 
-import java.util.Date;
-
 public class Orderinfo {
     private Integer oId;
 
@@ -9,7 +7,7 @@ public class Orderinfo {
 
     private Integer status;
 
-    private Date ordertime;
+    private String ordertime;
 
     private Integer pid;
 
@@ -37,12 +35,12 @@ public class Orderinfo {
         this.status = status;
     }
 
-    public Date getOrdertime() {
+    public String getOrdertime() {
         return ordertime;
     }
 
-    public void setOrdertime(Date ordertime) {
-        this.ordertime = ordertime;
+    public void setOrdertime(String ordertime) {
+        this.ordertime = ordertime == null ? null : ordertime.trim();
     }
 
     public Integer getPid() {

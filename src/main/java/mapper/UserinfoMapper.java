@@ -4,6 +4,9 @@ import entity.Userinfo;
 
 public interface UserinfoMapper {
 
+    int selectUidByUsername(String username);
+
+    String selectEmailByUsername(String name);
 
     Userinfo selectByUsername(String username);
 

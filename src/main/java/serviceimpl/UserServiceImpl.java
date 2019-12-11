@@ -13,6 +13,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public int selectUidByUsername(String username) {
+        return uim.selectUidByUsername(username);
+    }
+
+    @Override
+    public String selectEmailByUsername(String name) {
+        return uim.selectEmailByUsername(name);
+    }
+
+    @Override
     public Userinfo selectByUsername(String username) {
         return uim.selectByUsername(username);
     }

@@ -19,7 +19,13 @@
   </sql>
 
   <select id="selectAllProductsByP_type" resultType="java.lang.String" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />from productinfo where P_TYPE=#{p_type,jdbcType=VARCHAR}
+    <!--select <include refid="Base_Column_List" />from productinfo where P_TYPE=#{p_type,jdbcType=VARCHAR}-->
+
+    select * from(
+    select t.*,rownum rn from (
+    select * from productinfo where p_type=#{p_type,jdbcType=VARCHAR}) t where rownum&lt;=#{page,jdbcType=DECIMAL}*2)
+    where rn>=(#{page,jdbcType=DECIMAL}-1)*2+1
+
   </select>
 
   <select id="selectAllP_type" resultType="java.lang.String">
